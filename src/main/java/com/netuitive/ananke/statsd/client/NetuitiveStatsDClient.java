@@ -69,30 +69,7 @@ public class NetuitiveStatsDClient implements StatsDClient{
     public void increment(IncrementRequest req) throws IOException{
         send(formatMetric(req.getMetric(), "c", req.getValue(),req.getTags(), req.getSampleRate()));
     }
-
-    /*
-     Send a service check run.
-        >>> statsd.service_check('my_service.check_name', DogStatsd.WARNING)
-        """
-        message = self._escape_service_check_message(message) if message is not None else ''
-
-        string = u'_sc|{0}|{1}'.format(check_name, status)
-
-        if timestamp:
-            string = u'{0}|d:{1}'.format(string, timestamp)
-        if hostname:
-            string = u'{0}|h:{1}'.format(string, hostname)
-        if tags:
-            string = u'{0}|#{1}'.format(string, ','.join(tags))
-        if message:
-            string = u'{0}|m:{1}'.format(string, message)
-
-        try:
-            self.socket.send(string.encode(self.encoding))
-    
-    _sc|netuitive-agent|1
-    */
-    private String formatStatusCheck(ServiceCheckRequest req){
+    protected String formatStatusCheck(ServiceCheckRequest req){
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
         formatter.format("_sc|%s|%d", req.getCheckName(), req.getStatus().ordinal());
@@ -146,30 +123,8 @@ public class NetuitiveStatsDClient implements StatsDClient{
     public void timing(TimingRequest req) throws IOException{
         send(formatMetric(req.getMetric(), "ms", req.getValue(),req.getTags(), req.getSampleRate()));
     }
-    /*_e{15,4}:polls index hit|text
-    string = u'_e{%d,%d}:%s|%s' % (len(title), len(text), title, text)
-        if date_happened:
-            string = '%s|d:%d' % (string, date_happened)
-        if hostname:
-            string = '%s|h:%s' % (string, hostname)
-        if aggregation_key:
-            string = '%s|k:%s' % (string, aggregation_key)
-        if priority:
-            string = '%s|p:%s' % (string, priority)
-        if source_type_name:
-            string = '%s|s:%s' % (string, source_type_name)
-        if alert_type:
-            string = '%s|t:%s' % (string, alert_type)
-        if tags:
-            string = '%s|#%s' % (string, ','.join(tags))
-
-        if len(string) > 8 * 1024:
-            raise Exception(u'Event "%s" payload is too big (more that 8KB), '
-                            'event discarded' % title)
-
-        try:
-            self.socket.send(string.encode(self.encoding))*/
-    private String formatEvent(EventRequest req){
+    
+    protected String formatEvent(EventRequest req){
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
         formatter.format("_e{%d,%d}:%s|%s", 
@@ -214,15 +169,8 @@ public class NetuitiveStatsDClient implements StatsDClient{
         }
         return builder.toString();
     }
-    /*
-      payload = [metric, ":", value, "|", metric_type]
-        if sample_rate != 1:
-            payload.extend(["|@", sample_rate])
-        if tags:
-            payload.extend(["|#", ",".join(tags)])
-
-    */
-    private String formatMetric(String metric, String metricType, Long value, List<Tag> tags, Long sampleRate){
+    
+    protected String formatMetric(String metric, String metricType, Long value, List<Tag> tags, Long sampleRate){
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
         formatter.format("%s:%d|%s", metric, value, metricType);
@@ -235,7 +183,7 @@ public class NetuitiveStatsDClient implements StatsDClient{
         return builder.toString();
     }
     
-    private String formatTags(List<Tag> tags){
+    protected String formatTags(List<Tag> tags){
         StringBuilder builder = new StringBuilder();
         if(tags != null && !tags.isEmpty()){
             tags.forEach(tag -> {
