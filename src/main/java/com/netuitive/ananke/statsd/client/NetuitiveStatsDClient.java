@@ -1,5 +1,6 @@
 package com.netuitive.ananke.statsd.client;
 
+import com.netuitive.ananke.statsd.client.exception.ClientException;
 import com.netuitive.ananke.statsd.client.exception.EventException;
 import com.netuitive.ananke.statsd.client.exception.MetricException;
 import com.netuitive.ananke.statsd.client.exception.ServiceCheckException;
@@ -32,7 +33,7 @@ public class NetuitiveStatsDClient implements StatsDClient{
     DatagramSocket socket;
     InetAddress address;
     int port;
-    public final Long MAX_MESSAGE_SIZE=8L * 1024L;
+    public static final Long MAX_MESSAGE_SIZE = 8L * 1024L;
     
     public NetuitiveStatsDClient(String hostname, int port) throws SocketException, UnknownHostException{
         this(InetAddress.getByName(hostname), port);
@@ -49,12 +50,12 @@ public class NetuitiveStatsDClient implements StatsDClient{
     }
     
     @Override
-    public void decrement(DecrementRequest req) throws IOException{
+    public void decrement(DecrementRequest req){
         send(formatMetric(req.getMetric(), "c", req.getValue()*-1,req.getTags(), req.getSampleRate()));
     }
 
     @Override
-    public void event(EventRequest req) throws IOException{
+    public void event(EventRequest req){
         String message = formatEvent(req);
         if(message.length() > MAX_MESSAGE_SIZE){
             throw new EventException("message size of " + message.length() + " is greater than max message size of " + MAX_MESSAGE_SIZE);
@@ -63,17 +64,17 @@ public class NetuitiveStatsDClient implements StatsDClient{
     }
 
     @Override
-    public void gauge(GaugeRequest req) throws IOException{
+    public void gauge(GaugeRequest req){
         send(formatMetric(req.getMetric(), "g", req.getValue(),req.getTags(), req.getSampleRate()));
     }
 
     @Override
-    public void histogram(HistogramRequest req) throws IOException{
+    public void histogram(HistogramRequest req){
         send(formatMetric(req.getMetric(), "h", req.getValue(),req.getTags(), req.getSampleRate()));
     }
 
     @Override
-    public void increment(IncrementRequest req) throws IOException{
+    public void increment(IncrementRequest req){
         send(formatMetric(req.getMetric(), "c", req.getValue(),req.getTags(), req.getSampleRate()));
     }
     protected String formatServiceCheck(ServiceCheckRequest req){
@@ -90,7 +91,7 @@ public class NetuitiveStatsDClient implements StatsDClient{
             formatter.format("|h:%s", 
                     req.getHostname());
         }
-        if(req.getTags()!= null & !req.getTags().isEmpty()){
+        if(req.getTags()!= null && !req.getTags().isEmpty()){
             formatter.format("|#%s", 
                     formatTags(req.getTags()));
         }
@@ -101,17 +102,17 @@ public class NetuitiveStatsDClient implements StatsDClient{
         return builder.toString();
     }
     @Override
-    public void serviceCheck(ServiceCheckRequest req) throws IOException{
+    public void serviceCheck(ServiceCheckRequest req){
         send(formatServiceCheck(req));
     }
 
     @Override
-    public void set(SetRequest req) throws IOException{
+    public void set(SetRequest req){
         send(formatMetric(req.getMetric(), "s", req.getValue(),req.getTags(), req.getSampleRate()));
     }
 
     @Override
-    public void timed(TimedRequest req) throws IOException{
+    public void timed(TimedRequest req){
         if(req.getFunc() == null){
             throw new MetricException("Func is a required field");
         }
@@ -130,7 +131,7 @@ public class NetuitiveStatsDClient implements StatsDClient{
     }
 
     @Override
-    public void timing(TimingRequest req) throws IOException{
+    public void timing(TimingRequest req){
         send(formatMetric(req.getMetric(), "ms", req.getValue(),req.getTags(), req.getSampleRate()));
     }
     
@@ -210,11 +211,15 @@ public class NetuitiveStatsDClient implements StatsDClient{
         return builder.toString();
     }
     
-    protected void send(String message) throws IOException {
+    protected void send(String message){
         byte[] buf = message.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length,
                 address, port);
-        socket.send(packet);
+        try {
+            socket.send(packet);
+        } catch (IOException ex) {
+            throw new ClientException(ex);
+        }
     }
 
 }

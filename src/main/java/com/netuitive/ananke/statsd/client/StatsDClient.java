@@ -9,28 +9,27 @@ import com.netuitive.ananke.statsd.client.request.ServiceCheckRequest;
 import com.netuitive.ananke.statsd.client.request.SetRequest;
 import com.netuitive.ananke.statsd.client.request.TimedRequest;
 import com.netuitive.ananke.statsd.client.request.TimingRequest;
-import java.io.IOException;
 
 /**
  *
  * @author john.king
  */
 public interface StatsDClient {
-    public void decrement(DecrementRequest req) throws IOException;
+    public void decrement(DecrementRequest req);
     
-    public void event(EventRequest req) throws IOException;
+    public void event(EventRequest req);
     
-    public void gauge(GaugeRequest req) throws IOException;
+    public void gauge(GaugeRequest req);
     
-    public void histogram(HistogramRequest req) throws IOException;
+    public void histogram(HistogramRequest req);
     
-    public void increment(IncrementRequest req) throws IOException;
+    public void increment(IncrementRequest req);
     
-    public void serviceCheck(ServiceCheckRequest req) throws IOException;
+    public void serviceCheck(ServiceCheckRequest req);
     
-    public void set(SetRequest req) throws IOException;
+    public void set(SetRequest req);
     
-    public void timed(TimedRequest req) throws IOException;
+    public void timed(TimedRequest req);
     
-    public void timing(TimingRequest req) throws IOException;
+    public void timing(TimingRequest req);
 }
