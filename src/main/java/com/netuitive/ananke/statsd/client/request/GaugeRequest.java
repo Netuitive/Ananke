@@ -2,32 +2,32 @@ package com.netuitive.ananke.statsd.client.request;
 
 import com.netuitive.ananke.statsd.entity.Tag;
 import java.util.List;
-import lombok.Data;
-import lombok.experimental.Wither;
 
 /**
  *
  * @author john.king
  */
-@Data
-@Wither
-public class GaugeRequest {
-
-    String metric;
-    Long value;
-    List<Tag> tags;
-    Long sampleRate;
-
+public class GaugeRequest extends AbstractMetricRequest{
     public GaugeRequest() {
     }
-    
 
     public GaugeRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
-        this.metric = metric;
-        this.value = value;
-        this.tags = tags;
-        this.sampleRate = sampleRate;
+        super(metric, value, tags, sampleRate);
     }
-    
-    
+
+    public GaugeRequest withSampleRate(Long sampleRate) {
+        return this.sampleRate == sampleRate ? this : new GaugeRequest(this.metric, this.value, this.tags, sampleRate);
+    }
+
+    public GaugeRequest withTags(List<Tag> tags) {
+        return this.tags == tags ? this : new GaugeRequest(this.metric, this.value, tags, this.sampleRate);
+    }
+
+    public GaugeRequest withValue(Long value) {
+        return this.value == value ? this : new GaugeRequest(this.metric, value, this.tags, this.sampleRate);
+    }
+
+    public GaugeRequest withMetric(String metric) {
+        return this.metric == metric ? this : new GaugeRequest(metric, this.value, this.tags, this.sampleRate);
+    }
 }
