@@ -10,9 +10,12 @@ import java.util.List;
 public class TimingRequest extends AbstractMetricRequest{ 
     public TimingRequest() {
     }
-
+    
     public TimingRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
-        super(metric, value, tags, sampleRate);
+        this.metric = metric;
+        this.value = value;
+        this.tags = tags;
+        this.sampleRate = sampleRate;
     }
 
     public TimingRequest withSampleRate(Long sampleRate) {
