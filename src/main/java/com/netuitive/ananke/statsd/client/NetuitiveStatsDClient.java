@@ -1,10 +1,12 @@
 package com.netuitive.ananke.statsd.client;
 
 import com.netuitive.ananke.statsd.client.exception.EventException;
+import com.netuitive.ananke.statsd.client.exception.MetricException;
+import com.netuitive.ananke.statsd.client.exception.ServiceCheckException;
 import com.netuitive.ananke.statsd.client.request.DecrementRequest;
 import com.netuitive.ananke.statsd.client.request.EventRequest;
 import com.netuitive.ananke.statsd.client.request.GaugeRequest;
-import com.netuitive.ananke.statsd.client.request.HistorgramRequest;
+import com.netuitive.ananke.statsd.client.request.HistogramRequest;
 import com.netuitive.ananke.statsd.client.request.IncrementRequest;
 import com.netuitive.ananke.statsd.client.request.ServiceCheckRequest;
 import com.netuitive.ananke.statsd.client.request.SetRequest;
@@ -37,10 +39,15 @@ public class NetuitiveStatsDClient implements StatsDClient{
     }
     
     public NetuitiveStatsDClient(InetAddress address, int port) throws SocketException{
-        this.socket = new DatagramSocket();
+        this(new DatagramSocket(), address, port);
+    }
+    
+    public NetuitiveStatsDClient(DatagramSocket socket, InetAddress address, int port){
+        this.socket = socket;
         this.address = address;
         this.port = port;
     }
+    
     @Override
     public void decrement(DecrementRequest req) throws IOException{
         send(formatMetric(req.getMetric(), "c", req.getValue()*-1,req.getTags(), req.getSampleRate()));
@@ -61,7 +68,7 @@ public class NetuitiveStatsDClient implements StatsDClient{
     }
 
     @Override
-    public void histogram(HistorgramRequest req) throws IOException{
+    public void histogram(HistogramRequest req) throws IOException{
         send(formatMetric(req.getMetric(), "h", req.getValue(),req.getTags(), req.getSampleRate()));
     }
 
@@ -69,33 +76,33 @@ public class NetuitiveStatsDClient implements StatsDClient{
     public void increment(IncrementRequest req) throws IOException{
         send(formatMetric(req.getMetric(), "c", req.getValue(),req.getTags(), req.getSampleRate()));
     }
-    protected String formatStatusCheck(ServiceCheckRequest req){
+    protected String formatServiceCheck(ServiceCheckRequest req){
+        if(req.getCheckName() == null || req.getCheckName().isEmpty() || req.getStatus() == null){
+            throw new ServiceCheckException("checkName and status are required fields");
+        }
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
         formatter.format("_sc|%s|%d", req.getCheckName(), req.getStatus().ordinal());
         if(req.getTimestamp() != null){
-            formatter.format("%s|d:%d", req.getTimestamp().getTime());
+            formatter.format("|d:%d", req.getTimestamp().getTime());
         }
         if(req.getHostname()!=null && !req.getHostname().isEmpty()){
-            formatter.format("%s|h:%s", 
-                    builder.toString(), 
+            formatter.format("|h:%s", 
                     req.getHostname());
         }
         if(req.getTags()!= null & !req.getTags().isEmpty()){
-            formatter.format("%s|#:%s", 
-                    builder.toString(), 
+            formatter.format("|#%s", 
                     formatTags(req.getTags()));
         }
         if(req.getMessage()!=null && !req.getMessage().isEmpty()){
-            formatter.format("%s|h:%s", 
-                    builder.toString(), 
+            formatter.format("|m:%s", 
                     req.getMessage());
         }
         return builder.toString();
     }
     @Override
     public void serviceCheck(ServiceCheckRequest req) throws IOException{
-        send(formatStatusCheck(req));
+        send(formatServiceCheck(req));
     }
 
     @Override
@@ -105,6 +112,9 @@ public class NetuitiveStatsDClient implements StatsDClient{
 
     @Override
     public void timed(TimedRequest req) throws IOException{
+        if(req.getFunc() == null){
+            throw new MetricException("Func is a required field");
+        }
         Date start = new Date();
         try {
             req.getFunc().call();
@@ -127,58 +137,61 @@ public class NetuitiveStatsDClient implements StatsDClient{
     protected String formatEvent(EventRequest req){
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
+        if(req.getTitle() == null || req.getTitle().isEmpty()){
+            throw new EventException("title is a required field");
+        }
+        if(req.getText() == null){
+            req.setText("");
+        }
         formatter.format("_e{%d,%d}:%s|%s", 
                 req.getTitle().length(),
-                req.getTitle().length(),
+                req.getText().length(),
                 req.getTitle(),
                 req.getText());
         if(req.getDateHappened() != null){
-            formatter.format("%s|d:%d", 
-                    builder.toString(), 
+            formatter.format("|d:%d",  
                     req.getDateHappened().getTime());
         }
         if(req.getHostname()!=null && !req.getHostname().isEmpty()){
-            formatter.format("%s|h:%s", 
-                    builder.toString(), 
+            formatter.format("|h:%s", 
                     req.getHostname());
         }
         if(req.getAggregationKey() != null & !req.getAggregationKey().isEmpty()){
-            formatter.format("%s|k:%s", 
-                    builder.toString(), 
+            formatter.format("|k:%s",  
                     req.getAggregationKey());
         }
         if(req.getPriority() != null & !req.getPriority().isEmpty()){
-            formatter.format("%s|p:%s", 
-                    builder.toString(), 
+            formatter.format("|p:%s", 
                     req.getPriority());
         }
         if(req.getSourceTypeName()!= null & !req.getSourceTypeName().isEmpty()){
-            formatter.format("%s|s:%s", 
-                    builder.toString(), 
+            formatter.format("|s:%s", 
                     req.getSourceTypeName());
         }
         if(req.getAlertType()!= null & !req.getAlertType().isEmpty()){
-            formatter.format("%s|t:%s", 
-                    builder.toString(), 
+            formatter.format("|t:%s", 
                     req.getAlertType());
         }
         if(req.getTags()!= null & !req.getTags().isEmpty()){
-            formatter.format("%s|#:%s", 
-                    builder.toString(), 
+            formatter.format("|#%s", 
                     formatTags(req.getTags()));
         }
         return builder.toString();
     }
     
     protected String formatMetric(String metric, String metricType, Long value, List<Tag> tags, Long sampleRate){
+        if(metric == null || metric.isEmpty() || value == null){
+            throw new MetricException("metric and value are required fields");
+        }
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
         formatter.format("%s:%d|%s", metric, value, metricType);
+        
         if(sampleRate != null && sampleRate != 1L){
-            formatter.format("%s|@%d", builder.toString(), sampleRate);
+            formatter.format("|@%d", sampleRate);
         }
         if(tags != null && !tags.isEmpty()){
-            formatter.format("%s|#%s", builder.toString(), formatTags(tags));
+            formatter.format("|#%s", formatTags(tags));
         }
         return builder.toString();
     }
@@ -186,18 +199,18 @@ public class NetuitiveStatsDClient implements StatsDClient{
     protected String formatTags(List<Tag> tags){
         StringBuilder builder = new StringBuilder();
         if(tags != null && !tags.isEmpty()){
-            tags.forEach(tag -> {
+            for(Tag tag : tags){
                 builder.append(tag.getName())
                         .append(":")
                         .append(tag.getValue())
                         .append(",");
-            });
+            }
             builder.deleteCharAt(builder.length() - 1);
         }
         return builder.toString();
     }
     
-    private void send(String message) throws IOException {
+    protected void send(String message) throws IOException {
         byte[] buf = message.getBytes();
         DatagramPacket packet = new DatagramPacket(buf, buf.length,
                 address, port);

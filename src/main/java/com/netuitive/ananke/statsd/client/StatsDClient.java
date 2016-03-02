@@ -3,19 +3,13 @@ package com.netuitive.ananke.statsd.client;
 import com.netuitive.ananke.statsd.client.request.DecrementRequest;
 import com.netuitive.ananke.statsd.client.request.EventRequest;
 import com.netuitive.ananke.statsd.client.request.GaugeRequest;
-import com.netuitive.ananke.statsd.client.request.HistorgramRequest;
+import com.netuitive.ananke.statsd.client.request.HistogramRequest;
 import com.netuitive.ananke.statsd.client.request.IncrementRequest;
 import com.netuitive.ananke.statsd.client.request.ServiceCheckRequest;
 import com.netuitive.ananke.statsd.client.request.SetRequest;
 import com.netuitive.ananke.statsd.client.request.TimedRequest;
 import com.netuitive.ananke.statsd.client.request.TimingRequest;
 import java.io.IOException;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
@@ -28,7 +22,7 @@ public interface StatsDClient {
     
     public void gauge(GaugeRequest req) throws IOException;
     
-    public void histogram(HistorgramRequest req) throws IOException;
+    public void histogram(HistogramRequest req) throws IOException;
     
     public void increment(IncrementRequest req) throws IOException;
     

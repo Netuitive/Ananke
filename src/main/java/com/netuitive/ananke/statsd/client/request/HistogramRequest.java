@@ -11,17 +11,17 @@ import lombok.experimental.Wither;
  */
 @Data
 @Wither
-public class HistorgramRequest {
+public class HistogramRequest {
 
     String metric;
     Long value;
     List<Tag> tags;
     Long sampleRate;
 
-    public HistorgramRequest() {
+    public HistogramRequest() {
     }
 
-    public HistorgramRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    public HistogramRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;
         this.tags = tags;

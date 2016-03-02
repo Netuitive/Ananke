@@ -2,7 +2,6 @@ package com.netuitive.ananke.statsd.client.request;
 
 import com.netuitive.ananke.statsd.entity.Tag;
 import java.util.List;
-import java.util.concurrent.Callable;
 import lombok.Data;
 import lombok.experimental.Wither;
 
