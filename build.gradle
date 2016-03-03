@@ -1,0 +1,41 @@
+group = 'com.netuitive'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        //classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.7.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'distribution'
+
+repositories {
+    mavenCentral()
+}
+test {
+    useTestNG {
+        includeGroups 'unit', 'integration'
+        options {
+            listeners.add('org.testng.reporters.XMLReporter')
+        }
+    }
+}
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+dependencies {
+    compile ("org.projectlombok:lombok:1.14.8")
+    testCompile("org.mockito:mockito-core:1.9.5")
+    testCompile("org.springframework:spring-test:4.0.7.RELEASE")
+    testCompile("org.testng:testng:6.8.8")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.11'
+}
