@@ -49,26 +49,26 @@ something like `feature/upgrade_agent_0.2.3-70`.
 or may be controversial, we're okay with you opening an issue separately and linking to it in 
 your PR. That way, if the PR is not accepted, the issue will remain and be tracked.
 3. Clone the fork/branch locally:
-```
-$ git clone https://github.com/Netuitive/Ananke.git
-```
+    ```
+    $ git clone https://github.com/Netuitive/Ananke.git
+    ```
 4. Close (and reference) issues by the `closes #XXX` or `fixes #XXX` notation in the commit
 message. Please use a descriptive, useful commit message that could be used to understand why a
 particular change was made.  Example:
-```
-$ git add *.txt
-$ git commit -m "Fixes #xxx. Here's a useful commit message about why the change was made."
-$ git push origin name-of-fix-or-feature
-```
+    ```
+    $ git add *.txt
+    $ git commit -m "Fixes #xxx. Here's a useful commit message about why the change was made."
+    $ git push origin name-of-fix-or-feature
+    ```
 5. Keep pushing commits to the initial branch using `--amend`/`--rebase` as necessary. Don't mix 
 unrelated issues in a single branch.
 6. Clean up the branch (rebase with master to synchronize, squash, edit commits, test, etc.) to
 prepare for it to be merged.
 7. If you didn't open a pull request already, do so now. Your pull request should have the following:
-* Descriptive commit messages.
-* Updated documentation.
-* Passed continuous integration (CI) tests
-* Version bumps
-* A changelog
+    * Descriptive commit messages.
+    * Updated documentation.
+    * Passed continuous integration (CI) tests
+    * Version bumps
+    * A changelog
 8. After further review, a project maintainer can merge your request.
 9. Create/update the changelog if necessary.
