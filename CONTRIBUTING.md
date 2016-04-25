@@ -50,7 +50,7 @@ or may be controversial, we're okay with you opening an issue separately and lin
 your PR. That way, if the PR is not accepted, the issue will remain and be tracked.
 3. Clone the fork/branch locally:
 ```
-$ git clone https://github.com/[path to repo]
+$ git clone https://github.com/Netuitive/Ananke.git
 ```
 4. Close (and reference) issues by the `closes #XXX` or `fixes #XXX` notation in the commit
 message. Please use a descriptive, useful commit message that could be used to understand why a
