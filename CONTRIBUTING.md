@@ -57,7 +57,7 @@ your PR. That way, if the PR is not accepted, the issue will remain and be track
     
 4. Close (and reference) issues by the `closes #XXX` or `fixes #XXX` notation in the commit
 message. Please use a descriptive, useful commit message that could be used to understand why a
-particular change was made.  Example:
+particular change was made.  <b>Example:</b>
 
         
         $ git add *.txt
@@ -76,6 +76,7 @@ prepare for it to be merged.
     * Passed continuous integration (CI) tests
     * Version bumps
     * A changelog
+    
 8. After further review, a project maintainer can merge your request.
 
 9. Create/update the changelog if necessary.
