@@ -47,6 +47,7 @@ modifyPom {
 project {
                name 'ananke'
                packaging 'jar'
+               artifactId 'ananke'
                description 'Java SDK for statsd'
                url 'https://github.com/Netuitive/Ananke'
                scm {
