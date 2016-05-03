@@ -1,10 +1,12 @@
 group = 'com.netuitive'
+version = '0.0.1'
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
     dependencies {
-        //classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.7.RELEASE")
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
     }
 }
 
@@ -13,6 +15,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'distribution'
+apply plugin: 'com.bmuschko.nexus'
 
 repositories {
     mavenCentral()
@@ -24,6 +27,50 @@ test {
             listeners.add('org.testng.reporters.XMLReporter')
         }
     }
+}
+
+ extraArchive {
+     sources = true
+     tests = true
+     javadoc = true
+ }
+//tasks['signArchives'].mustRunAfter(assembleDist)
+ nexus {
+     sign = false
+ }
+distTar{
+  from 'build/libs'
+}
+distZip{
+  from 'build/libs'
+}
+modifyPom {
+project {
+               name 'ananke'
+               packaging 'jar'
+               description 'Java SDK for statsd'
+               url 'https://github.com/Netuitive/Ananke'
+               scm {
+                   url 'https://github.com/Netuitive/Ananke.git'
+                   connection 'https://github.com/Netuitive/Ananke.git'
+                   developerConnection 'https://github.com/Netuitive/Ananke.git'
+               }
+ 
+               licenses {
+                   license {
+                       name 'The Apache Software License, Version 2.0'
+                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                       distribution 'repo'
+                   }
+               }
+ 
+               developers {
+                   developer {
+                       id 'jking13'
+                       name 'John King'
+                   }
+               }
+           }
 }
 
 sourceCompatibility = 1.6
