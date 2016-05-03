@@ -34,7 +34,6 @@ test {
      tests = true
      javadoc = true
  }
-//tasks['signArchives'].mustRunAfter(assembleDist)
  nexus {
      sign = false
  }
