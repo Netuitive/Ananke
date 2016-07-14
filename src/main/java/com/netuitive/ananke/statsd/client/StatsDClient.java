@@ -9,27 +9,28 @@ import com.netuitive.ananke.statsd.client.request.ServiceCheckRequest;
 import com.netuitive.ananke.statsd.client.request.SetRequest;
 import com.netuitive.ananke.statsd.client.request.TimedRequest;
 import com.netuitive.ananke.statsd.client.request.TimingRequest;
+import java.lang.IllegalArgumentException;
 
 /**
  *
  * @author john.king
  */
 public interface StatsDClient {
-    public void decrement(DecrementRequest req);
+    public void decrement(DecrementRequest req) throws IllegalArgumentException;
     
-    public void event(EventRequest req);
+    public void event(EventRequest req) throws IllegalArgumentException;
     
-    public void gauge(GaugeRequest req);
+    public void gauge(GaugeRequest req) throws IllegalArgumentException;
     
-    public void histogram(HistogramRequest req);
+    public void histogram(HistogramRequest req) throws IllegalArgumentException;
     
-    public void increment(IncrementRequest req);
+    public void increment(IncrementRequest req) throws IllegalArgumentException;
     
-    public void serviceCheck(ServiceCheckRequest req);
+    public void serviceCheck(ServiceCheckRequest req) throws IllegalArgumentException;
     
-    public void set(SetRequest req);
+    public void set(SetRequest req) throws IllegalArgumentException;
     
-    public void timed(TimedRequest req);
+    public void timed(TimedRequest req) throws IllegalArgumentException;
     
-    public void timing(TimingRequest req);
+    public void timing(TimingRequest req) throws IllegalArgumentException;
 }

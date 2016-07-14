@@ -17,6 +17,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -84,7 +85,7 @@ public class NetuitiveStatsDClientTest {
     }
     
     @Test
-    public void testIncrement() throws IOException{
+    public void testIncrement() throws IOException, IllegalArgumentException {
         IncrementRequest req = new IncrementRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
@@ -96,7 +97,7 @@ public class NetuitiveStatsDClientTest {
     }
     
     @Test
-    public void testDecrement() throws IOException{
+    public void testDecrement() throws IOException, IllegalArgumentException {
         DecrementRequest req = new DecrementRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
@@ -108,7 +109,7 @@ public class NetuitiveStatsDClientTest {
     }
     
     @Test
-    public void testGauge() throws IOException{
+    public void testGauge() throws IOException, IllegalArgumentException {
         GaugeRequest req = new GaugeRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
@@ -120,7 +121,7 @@ public class NetuitiveStatsDClientTest {
     }
     
     @Test
-    public void testHistogram() throws IOException{
+    public void testHistogram() throws IOException, IllegalArgumentException {
         HistogramRequest req = new HistogramRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
@@ -132,7 +133,7 @@ public class NetuitiveStatsDClientTest {
     }
     
     @Test
-    public void testSet() throws IOException{
+    public void testSet() throws IOException, IllegalArgumentException {
         SetRequest req = new SetRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
@@ -144,7 +145,7 @@ public class NetuitiveStatsDClientTest {
     }
     
     @Test
-    public void testTiming() throws IOException{
+    public void testTiming() throws IOException, IllegalArgumentException {
         TimingRequest req = new TimingRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
@@ -156,7 +157,7 @@ public class NetuitiveStatsDClientTest {
     }
     
     @Test
-    public void testTimed() throws IOException{
+    public void testTimed() throws IOException, IllegalArgumentException {
         TimedRequest req = new TimedRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
@@ -168,7 +169,7 @@ public class NetuitiveStatsDClientTest {
     }
     
     @Test
-    public void testEvent() throws IOException{
+    public void testEvent() throws IOException, IllegalArgumentException {
         EventRequest req = new EventRequest()
                 .withAggregationKey("aggregation_key")
                 .withAlertType("alert_type")
@@ -184,7 +185,7 @@ public class NetuitiveStatsDClientTest {
         assertEquals(new String(argCaptor.getValue().getData()), EVENT_FORMAT);
     }
     @Test
-    public void testServiceCheck() throws IOException{
+    public void testServiceCheck() throws IOException, IllegalArgumentException {
         ServiceCheckRequest req = new ServiceCheckRequest()
                 .withHostname("hostname")
                 .withTags(getTags())
@@ -196,6 +197,12 @@ public class NetuitiveStatsDClientTest {
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         String res = new String(argCaptor.getValue().getData());
         assertEquals(new String(argCaptor.getValue().getData()), SERVICE_CHECK_FORMAT);
+    }
+
+    @Test(expectedExceptions=IllegalArgumentException.class)
+    public void testNullFormatTags() throws IllegalArgumentException {
+        List<Tag> nullTags = Arrays.asList(new Tag("Name", "Value"), null);
+        client.formatTags(nullTags);
     }
     
     private List<Tag> getTags(){
