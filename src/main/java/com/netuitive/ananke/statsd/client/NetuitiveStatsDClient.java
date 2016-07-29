@@ -14,6 +14,8 @@ import com.netuitive.ananke.statsd.client.request.SetRequest;
 import com.netuitive.ananke.statsd.client.request.TimedRequest;
 import com.netuitive.ananke.statsd.client.request.TimingRequest;
 import com.netuitive.ananke.statsd.entity.Tag;
+import java.lang.IllegalArgumentException;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -50,12 +52,12 @@ public class NetuitiveStatsDClient implements StatsDClient{
     }
     
     @Override
-    public void decrement(DecrementRequest req){
+    public void decrement(DecrementRequest req) throws IllegalArgumentException {
         send(formatMetric(req.getMetric(), "c", req.getValue()*-1,req.getTags(), req.getSampleRate()));
     }
 
     @Override
-    public void event(EventRequest req){
+    public void event(EventRequest req) throws IllegalArgumentException {
         String message = formatEvent(req);
         if(message.length() > MAX_MESSAGE_SIZE){
             throw new EventException("message size of " + message.length() + " is greater than max message size of " + MAX_MESSAGE_SIZE);
@@ -64,20 +66,20 @@ public class NetuitiveStatsDClient implements StatsDClient{
     }
 
     @Override
-    public void gauge(GaugeRequest req){
+    public void gauge(GaugeRequest req) throws IllegalArgumentException {
         send(formatMetric(req.getMetric(), "g", req.getValue(),req.getTags(), req.getSampleRate()));
     }
 
     @Override
-    public void histogram(HistogramRequest req){
+    public void histogram(HistogramRequest req) throws IllegalArgumentException {
         send(formatMetric(req.getMetric(), "h", req.getValue(),req.getTags(), req.getSampleRate()));
     }
 
     @Override
-    public void increment(IncrementRequest req){
+    public void increment(IncrementRequest req) throws IllegalArgumentException {
         send(formatMetric(req.getMetric(), "c", req.getValue(),req.getTags(), req.getSampleRate()));
     }
-    protected String formatServiceCheck(ServiceCheckRequest req){
+    protected String formatServiceCheck(ServiceCheckRequest req) throws IllegalArgumentException {
         if(req.getCheckName() == null || req.getCheckName().isEmpty() || req.getStatus() == null){
             throw new ServiceCheckException("checkName and status are required fields");
         }
@@ -102,17 +104,17 @@ public class NetuitiveStatsDClient implements StatsDClient{
         return builder.toString();
     }
     @Override
-    public void serviceCheck(ServiceCheckRequest req){
+    public void serviceCheck(ServiceCheckRequest req) throws IllegalArgumentException {
         send(formatServiceCheck(req));
     }
 
     @Override
-    public void set(SetRequest req){
+    public void set(SetRequest req) throws IllegalArgumentException {
         send(formatMetric(req.getMetric(), "s", req.getValue(),req.getTags(), req.getSampleRate()));
     }
 
     @Override
-    public void timed(TimedRequest req){
+    public void timed(TimedRequest req) throws IllegalArgumentException {
         if(req.getFunc() == null){
             throw new MetricException("Func is a required field");
         }
@@ -131,11 +133,11 @@ public class NetuitiveStatsDClient implements StatsDClient{
     }
 
     @Override
-    public void timing(TimingRequest req){
+    public void timing(TimingRequest req) throws IllegalArgumentException {
         send(formatMetric(req.getMetric(), "ms", req.getValue(),req.getTags(), req.getSampleRate()));
     }
     
-    protected String formatEvent(EventRequest req){
+    protected String formatEvent(EventRequest req) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
         if(req.getTitle() == null || req.getTitle().isEmpty()){
@@ -180,7 +182,7 @@ public class NetuitiveStatsDClient implements StatsDClient{
         return builder.toString();
     }
     
-    protected String formatMetric(String metric, String metricType, Long value, List<Tag> tags, Long sampleRate){
+    protected String formatMetric(String metric, String metricType, Long value, List<Tag> tags, Long sampleRate) throws IllegalArgumentException {
         if(metric == null || metric.isEmpty() || value == null){
             throw new MetricException("metric and value are required fields");
         }
@@ -197,10 +199,13 @@ public class NetuitiveStatsDClient implements StatsDClient{
         return builder.toString();
     }
     
-    protected String formatTags(List<Tag> tags){
+    protected String formatTags(List<Tag> tags) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         if(tags != null && !tags.isEmpty()){
             for(Tag tag : tags){
+                if (tag == null) {
+                    throw new IllegalArgumentException("StatsD tags cannot be null");
+                }
                 builder.append(tag.getName())
                         .append(":")
                         .append(tag.getValue())
