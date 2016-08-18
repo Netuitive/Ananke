@@ -1,6 +1,5 @@
 package com.netuitive.ananke.statsd.client;
 
-import com.netuitive.ananke.statsd.client.exception.ClientException;
 import com.netuitive.ananke.statsd.client.exception.EventException;
 import com.netuitive.ananke.statsd.client.exception.MetricException;
 import com.netuitive.ananke.statsd.client.exception.ServiceCheckException;
@@ -14,14 +13,14 @@ import com.netuitive.ananke.statsd.client.request.SetRequest;
 import com.netuitive.ananke.statsd.client.request.TimedRequest;
 import com.netuitive.ananke.statsd.client.request.TimingRequest;
 import com.netuitive.ananke.statsd.entity.Tag;
-import java.lang.IllegalArgumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
@@ -30,24 +29,23 @@ import java.util.List;
  *
  * @author john.king
  */
-public class NetuitiveStatsDClient implements StatsDClient{
+public class NetuitiveStatsDClient implements StatsDClient {
+
+    private static Logger LOG = LoggerFactory.getLogger(NetuitiveStatsDClient.class);
 
     DatagramSocket socket;
-    InetAddress address;
+    String host;
     int port;
+
     public static final Long MAX_MESSAGE_SIZE = 8L * 1024L;
     
-    public NetuitiveStatsDClient(String hostname, int port) throws SocketException, UnknownHostException{
-        this(InetAddress.getByName(hostname), port);
+    public NetuitiveStatsDClient(String host, int port) throws SocketException {
+        this(new DatagramSocket(), host, port);
     }
     
-    public NetuitiveStatsDClient(InetAddress address, int port) throws SocketException{
-        this(new DatagramSocket(), address, port);
-    }
-    
-    public NetuitiveStatsDClient(DatagramSocket socket, InetAddress address, int port){
+    public NetuitiveStatsDClient(DatagramSocket socket, String host, int port) {
         this.socket = socket;
-        this.address = address;
+        this.host = host;
         this.port = port;
     }
     
@@ -218,13 +216,11 @@ public class NetuitiveStatsDClient implements StatsDClient{
     
     protected void send(String message){
         byte[] buf = message.getBytes();
-        DatagramPacket packet = new DatagramPacket(buf, buf.length,
-                address, port);
         try {
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(this.host), port);
             socket.send(packet);
-        } catch (IOException ex) {
-            throw new ClientException(ex);
+        } catch (IOException e) {
+            LOG.warn("Unable to connect to StatsD host: {}", this.host, e);
         }
     }
-
 }

@@ -11,26 +11,27 @@ import com.netuitive.ananke.statsd.client.request.TimedRequest;
 import com.netuitive.ananke.statsd.client.request.TimingRequest;
 import com.netuitive.ananke.statsd.entity.Status;
 import com.netuitive.ananke.statsd.entity.Tag;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
+
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
-import org.mockito.MockitoAnnotations;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 
 /**
  *
@@ -79,7 +80,7 @@ public class NetuitiveStatsDClientTest {
     @BeforeClass
     private void init() throws UnknownHostException{
         MockitoAnnotations.initMocks(this);
-        client = new NetuitiveStatsDClient(socket, InetAddress.getByName("127.0.0.1"), 8875);
+        client = new NetuitiveStatsDClient(socket, "127.0.0.1", 8875);
         argCaptor = ArgumentCaptor.forClass(DatagramPacket.class);
         
     }
