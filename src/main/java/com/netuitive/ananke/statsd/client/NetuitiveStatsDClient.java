@@ -220,7 +220,7 @@ public class NetuitiveStatsDClient implements StatsDClient {
             DatagramPacket packet = new DatagramPacket(buf, buf.length, InetAddress.getByName(this.host), port);
             socket.send(packet);
         } catch (IOException e) {
-            LOG.warn("Unable to connect to StatsD host: {}", this.host, e);
+            LOG.debug("Unable to connect to StatsD host: {}", this.host, e);
         }
     }
 }
