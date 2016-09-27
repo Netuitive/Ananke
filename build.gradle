@@ -1,5 +1,10 @@
 group = 'com.netuitive'
-version = '0.1.2'
+if (project.hasProperty('buildNumber')) {
+  version = '0.1.' + project.buildNumber
+} else {
+  version = '0.1.1'
+}
+ext.shouldSign = project.hasProperty('shouldSign') ? project.getProperty('shouldSign').toBoolean()  : false
 buildscript {
     repositories {
         mavenCentral()
@@ -35,7 +40,7 @@ test {
      javadoc = true
  }
  nexus {
-     sign = false
+     sign = shouldSign
  }
 distTar{
   from 'build/libs'
