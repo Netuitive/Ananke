@@ -1,9 +1,5 @@
 group = 'com.netuitive'
-if (project.hasProperty('buildNumber')) {
-  version = '0.1.' + project.buildNumber
-} else {
-  version = '0.1.1'
-}
+version = '0.1.24'
 ext.shouldSign = project.hasProperty('shouldSign') ? project.getProperty('shouldSign').toBoolean()  : false
 buildscript {
     repositories {
