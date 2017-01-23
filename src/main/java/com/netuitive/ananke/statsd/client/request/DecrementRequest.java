@@ -32,7 +32,7 @@ public class DecrementRequest extends AbstractMetricRequest {
     }
 
     public DecrementRequest withValue(Long value) {
-    	Double dvalue = (value == null ? null : value.doubleValue());
+        Double dvalue = (value == null ? null : value.doubleValue());
         return this.value == dvalue ? this : new DecrementRequest(this.metric, dvalue, this.tags, this.sampleRate);
     }
 

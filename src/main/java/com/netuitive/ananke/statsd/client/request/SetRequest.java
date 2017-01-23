@@ -28,7 +28,7 @@ public class SetRequest extends AbstractMetricRequest{
     }
 
     public SetRequest withValue(Long value) {
-    	Double dvalue = (value == null ? null : value.doubleValue());
+        Double dvalue = (value == null ? null : value.doubleValue());
         return this.value == dvalue ? this : new SetRequest(this.metric, dvalue, this.tags, this.sampleRate);
     }
 

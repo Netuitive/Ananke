@@ -28,7 +28,7 @@ public class HistogramRequest extends AbstractMetricRequest{
     }
 
     public HistogramRequest withValue(Long value) {
-    	Double dvalue = (value == null ? null : value.doubleValue());
+        Double dvalue = (value == null ? null : value.doubleValue());
         return this.value == dvalue ? this : new HistogramRequest(this.metric, dvalue, this.tags, this.sampleRate);
     }
 

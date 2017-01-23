@@ -28,7 +28,7 @@ public class IncrementRequest extends AbstractMetricRequest{
     }
 
     public IncrementRequest withValue(Long value) {
-    	Double dvalue = (value == null ? null : value.doubleValue());
+        Double dvalue = (value == null ? null : value.doubleValue());
         return this.value == dvalue ? this : new IncrementRequest(this.metric, dvalue, this.tags, this.sampleRate);
     }
 

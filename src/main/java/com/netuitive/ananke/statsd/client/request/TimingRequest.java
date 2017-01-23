@@ -27,7 +27,7 @@ public class TimingRequest extends AbstractMetricRequest{
     }
 
     public TimingRequest withValue(Long value) {
-    	Double dvalue = (value == null ? null : value.doubleValue());
+        Double dvalue = (value == null ? null : value.doubleValue());
         return this.value == dvalue ? this : new TimingRequest(this.metric, dvalue, this.tags, this.sampleRate);
     }
 
