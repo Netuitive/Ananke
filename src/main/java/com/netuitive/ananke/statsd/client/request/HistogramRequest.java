@@ -12,7 +12,7 @@ public class HistogramRequest extends AbstractMetricRequest{
     public HistogramRequest() {
     }
 
-    public HistogramRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    public HistogramRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;
         this.tags = tags;
@@ -28,6 +28,11 @@ public class HistogramRequest extends AbstractMetricRequest{
     }
 
     public HistogramRequest withValue(Long value) {
+    	Double dvalue = (value == null ? null : value.doubleValue());
+        return this.value == dvalue ? this : new HistogramRequest(this.metric, dvalue, this.tags, this.sampleRate);
+    }
+
+    public HistogramRequest withValue(Double value) {
         return this.value == value ? this : new HistogramRequest(this.metric, value, this.tags, this.sampleRate);
     }
 

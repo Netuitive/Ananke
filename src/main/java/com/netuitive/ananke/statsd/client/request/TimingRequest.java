@@ -11,7 +11,7 @@ public class TimingRequest extends AbstractMetricRequest{
     public TimingRequest() {
     }
     
-    public TimingRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    public TimingRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;
         this.tags = tags;
@@ -27,6 +27,11 @@ public class TimingRequest extends AbstractMetricRequest{
     }
 
     public TimingRequest withValue(Long value) {
+    	Double dvalue = (value == null ? null : value.doubleValue());
+        return this.value == dvalue ? this : new TimingRequest(this.metric, dvalue, this.tags, this.sampleRate);
+    }
+
+    public TimingRequest withValue(Double value) {
         return this.value == value ? this : new TimingRequest(this.metric, value, this.tags, this.sampleRate);
     }
 

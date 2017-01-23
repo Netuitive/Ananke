@@ -12,7 +12,7 @@ import lombok.Data;
 public abstract class AbstractMetricRequest {
 
     String metric;
-    Long value;
+    Double value;
     List<Tag> tags;
     Long sampleRate;
 }

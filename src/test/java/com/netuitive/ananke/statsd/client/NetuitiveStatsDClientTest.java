@@ -42,7 +42,8 @@ public class NetuitiveStatsDClientTest {
 
     
     private static final String METRIC = "test.metric";
-    private static final Long VALUE = 6L;
+    private static final String VALUE = "6.100000";
+    private static final String VALUE_DEC = "-6.100000";
     private static final String SAMPLE_RATE = "5";
     private static final String TAGS = "test.metric.1:test.value.1,test.metric.2:test.value.2";
     private static final String TITLE = "title";
@@ -57,7 +58,7 @@ public class NetuitiveStatsDClientTest {
     private static final Status STATUS = Status.OK;
     private static final String MESSAGE = "message";
     private static final String INCREMENT_FORMAT = METRIC + ":" + VALUE + "|c|@" + SAMPLE_RATE + "|#" + TAGS;
-    private static final String DECREMENT_FORMAT = METRIC + ":" + (VALUE*-1) + "|c|@" + SAMPLE_RATE + "|#" + TAGS;
+    private static final String DECREMENT_FORMAT = METRIC + ":" + VALUE_DEC + "|c|@" + SAMPLE_RATE + "|#" + TAGS;
     private static final String GAUGE_FORMAT = METRIC + ":" + VALUE + "|g|@" + SAMPLE_RATE + "|#" + TAGS;
     private static final String HISTOGRAM_FORMAT = METRIC + ":" + VALUE + "|h|@" + SAMPLE_RATE + "|#" + TAGS;
     private static final String SET_FORMAT = METRIC + ":" + VALUE + "|s|@" + SAMPLE_RATE + "|#" + TAGS;
@@ -80,7 +81,7 @@ public class NetuitiveStatsDClientTest {
     @BeforeClass
     private void init() throws UnknownHostException{
         MockitoAnnotations.initMocks(this);
-        client = new NetuitiveStatsDClient(socket, "127.0.0.1", 8875);
+        client = new NetuitiveStatsDClient(socket, "127.0.0.1", 32768);
         argCaptor = ArgumentCaptor.forClass(DatagramPacket.class);
         
     }
@@ -91,7 +92,7 @@ public class NetuitiveStatsDClientTest {
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6L);
+                .withValue(6.1);
         client.increment(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), INCREMENT_FORMAT);
@@ -103,7 +104,7 @@ public class NetuitiveStatsDClientTest {
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6L);
+                .withValue(6.1);
         client.decrement(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), DECREMENT_FORMAT);
@@ -115,7 +116,7 @@ public class NetuitiveStatsDClientTest {
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6L);
+                .withValue(6.1);
         client.gauge(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), GAUGE_FORMAT);
@@ -127,7 +128,7 @@ public class NetuitiveStatsDClientTest {
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6L);
+                .withValue(6.1);
         client.histogram(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), HISTOGRAM_FORMAT);
@@ -139,7 +140,7 @@ public class NetuitiveStatsDClientTest {
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6L);
+                .withValue(6.1);
         client.set(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), SET_FORMAT);
@@ -151,7 +152,7 @@ public class NetuitiveStatsDClientTest {
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6L);
+                .withValue(6.1);
         client.timing(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), TIMING_FORMAT);

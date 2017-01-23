@@ -12,7 +12,7 @@ public class IncrementRequest extends AbstractMetricRequest{
     public IncrementRequest() {
     }
 
-    public IncrementRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    public IncrementRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;
         this.tags = tags;
@@ -28,6 +28,11 @@ public class IncrementRequest extends AbstractMetricRequest{
     }
 
     public IncrementRequest withValue(Long value) {
+    	Double dvalue = (value == null ? null : value.doubleValue());
+        return this.value == dvalue ? this : new IncrementRequest(this.metric, dvalue, this.tags, this.sampleRate);
+    }
+
+    public IncrementRequest withValue(Double value) {
         return this.value == value ? this : new IncrementRequest(this.metric, value, this.tags, this.sampleRate);
     }
 
