@@ -13,6 +13,10 @@ public class SetRequest extends AbstractMetricRequest{
     }
 
     public SetRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    	this(metric, new Double(value), tags, sampleRate);
+    }
+    
+    public SetRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;
         this.tags = tags;
@@ -28,6 +32,11 @@ public class SetRequest extends AbstractMetricRequest{
     }
 
     public SetRequest withValue(Long value) {
+        Double dvalue = (value == null ? null : value.doubleValue());
+        return this.value == dvalue ? this : new SetRequest(this.metric, dvalue, this.tags, this.sampleRate);
+    }
+
+    public SetRequest withValue(Double value) {
         return this.value == value ? this : new SetRequest(this.metric, value, this.tags, this.sampleRate);
     }
 

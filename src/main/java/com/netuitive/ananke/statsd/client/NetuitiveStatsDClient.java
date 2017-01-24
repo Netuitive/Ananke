@@ -180,13 +180,13 @@ public class NetuitiveStatsDClient implements StatsDClient {
         return builder.toString();
     }
     
-    protected String formatMetric(String metric, String metricType, Long value, List<Tag> tags, Long sampleRate) throws IllegalArgumentException {
+    protected String formatMetric(String metric, String metricType, Double value, List<Tag> tags, Long sampleRate) throws IllegalArgumentException {
         if(metric == null || metric.isEmpty() || value == null){
             throw new MetricException("metric and value are required fields");
         }
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
-        formatter.format("%s:%d|%s", metric, value, metricType);
+        formatter.format("%s:%f|%s", metric, value, metricType);
         
         if(sampleRate != null && sampleRate != 1L){
             formatter.format("|@%d", sampleRate);
