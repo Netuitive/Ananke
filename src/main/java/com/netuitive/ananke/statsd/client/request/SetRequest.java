@@ -12,6 +12,10 @@ public class SetRequest extends AbstractMetricRequest{
     public SetRequest() {
     }
 
+    public SetRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    	this(metric, new Double(value), tags, sampleRate);
+    }
+    
     public SetRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;

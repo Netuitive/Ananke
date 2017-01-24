@@ -12,6 +12,10 @@ public class IncrementRequest extends AbstractMetricRequest{
     public IncrementRequest() {
     }
 
+    public IncrementRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    	this(metric, new Double(value), tags, sampleRate);
+    }
+    
     public IncrementRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;

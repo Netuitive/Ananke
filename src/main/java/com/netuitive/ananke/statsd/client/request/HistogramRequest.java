@@ -12,6 +12,10 @@ public class HistogramRequest extends AbstractMetricRequest{
     public HistogramRequest() {
     }
 
+    public HistogramRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    	this(metric, new Double(value), tags, sampleRate);
+    }
+    
     public HistogramRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;

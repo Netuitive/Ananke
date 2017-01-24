@@ -42,8 +42,8 @@ public class NetuitiveStatsDClientTest {
 
     
     private static final String METRIC = "test.metric";
-    private static final String VALUE = "6.100000";
-    private static final String VALUE_DEC = "-6.100000";
+    private static final String VALUE = "6.000000";
+    private static final String VALUE_DEC = "-6.000000";
     private static final String SAMPLE_RATE = "5";
     private static final String TAGS = "test.metric.1:test.value.1,test.metric.2:test.value.2";
     private static final String TITLE = "title";
@@ -88,11 +88,16 @@ public class NetuitiveStatsDClientTest {
     
     @Test
     public void testIncrement() throws IOException, IllegalArgumentException {
-        IncrementRequest req = new IncrementRequest()
+    	IncrementRequest req = new IncrementRequest("test.metric", 6L, getTags(), 5L);
+    	client.increment(req);
+        verify(socket, atLeastOnce()).send(argCaptor.capture());
+        assertEquals(new String(argCaptor.getValue().getData()), INCREMENT_FORMAT);
+        
+        req = new IncrementRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6.1);
+                .withValue(6.0);
         client.increment(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), INCREMENT_FORMAT);
@@ -100,11 +105,16 @@ public class NetuitiveStatsDClientTest {
     
     @Test
     public void testDecrement() throws IOException, IllegalArgumentException {
-        DecrementRequest req = new DecrementRequest()
+    	DecrementRequest req = new DecrementRequest("test.metric", 6L, getTags(), 5L);
+    	client.decrement(req);
+        verify(socket, atLeastOnce()).send(argCaptor.capture());
+        
+        assertEquals(new String(argCaptor.getValue().getData()), DECREMENT_FORMAT);
+        req = new DecrementRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6.1);
+                .withValue(6.0);
         client.decrement(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), DECREMENT_FORMAT);
@@ -112,23 +122,33 @@ public class NetuitiveStatsDClientTest {
     
     @Test
     public void testGauge() throws IOException, IllegalArgumentException {
-        GaugeRequest req = new GaugeRequest()
-                .withMetric("test.metric")
-                .withSampleRate(5L)
-                .withTags(getTags())
-                .withValue(6.1);
+        GaugeRequest req = new GaugeRequest("test.metric", 6L, getTags(), 5L);
         client.gauge(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), GAUGE_FORMAT);
-    }
-    
-    @Test
-    public void testHistogram() throws IOException, IllegalArgumentException {
-        HistogramRequest req = new HistogramRequest()
+
+        req = new GaugeRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6.1);
+                .withValue(6.0);
+        client.gauge(req);
+        verify(socket, atLeastOnce()).send(argCaptor.capture());
+        assertEquals(new String(argCaptor.getValue().getData()), GAUGE_FORMAT);
+}
+    
+    @Test
+    public void testHistogram() throws IOException, IllegalArgumentException {
+        HistogramRequest req = new HistogramRequest("test.metric", 6L, getTags(), 5L);
+        client.histogram(req);
+        verify(socket, atLeastOnce()).send(argCaptor.capture());
+        assertEquals(new String(argCaptor.getValue().getData()), HISTOGRAM_FORMAT);
+
+        req = new HistogramRequest()
+                .withMetric("test.metric")
+                .withSampleRate(5L)
+                .withTags(getTags())
+                .withValue(6.0);
         client.histogram(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), HISTOGRAM_FORMAT);
@@ -136,11 +156,17 @@ public class NetuitiveStatsDClientTest {
     
     @Test
     public void testSet() throws IOException, IllegalArgumentException {
-        SetRequest req = new SetRequest()
+        SetRequest req = new SetRequest("test.metric", 6L, getTags(), 5L);
+        client.set(req);
+        verify(socket, atLeastOnce()).send(argCaptor.capture());
+        assertEquals(new String(argCaptor.getValue().getData()), SET_FORMAT);
+
+    	
+        req = new SetRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6.1);
+                .withValue(6.0);
         client.set(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), SET_FORMAT);
@@ -148,11 +174,16 @@ public class NetuitiveStatsDClientTest {
     
     @Test
     public void testTiming() throws IOException, IllegalArgumentException {
-        TimingRequest req = new TimingRequest()
+        TimingRequest req = new TimingRequest("test.metric", 6L, getTags(), 5L);
+        client.timing(req);
+        verify(socket, atLeastOnce()).send(argCaptor.capture());
+        assertEquals(new String(argCaptor.getValue().getData()), TIMING_FORMAT);
+
+        req = new TimingRequest()
                 .withMetric("test.metric")
                 .withSampleRate(5L)
                 .withTags(getTags())
-                .withValue(6.1);
+                .withValue(6.0);
         client.timing(req);
         verify(socket, atLeastOnce()).send(argCaptor.capture());
         assertEquals(new String(argCaptor.getValue().getData()), TIMING_FORMAT);

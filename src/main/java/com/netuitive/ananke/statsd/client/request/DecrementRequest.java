@@ -12,6 +12,10 @@ public class DecrementRequest extends AbstractMetricRequest {
     public DecrementRequest() {
     }
 
+    public DecrementRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    	this(metric, new Double(value), tags, sampleRate);
+    }
+    
     public DecrementRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;

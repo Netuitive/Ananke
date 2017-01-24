@@ -11,6 +11,10 @@ public class GaugeRequest extends AbstractMetricRequest{
     public GaugeRequest() {
     }
 
+    public GaugeRequest(String metric, Long value, List<Tag> tags, Long sampleRate) {
+    	this(metric, new Double(value), tags, sampleRate);
+    }
+    
     public GaugeRequest(String metric, Double value, List<Tag> tags, Long sampleRate) {
         this.metric = metric;
         this.value = value;
